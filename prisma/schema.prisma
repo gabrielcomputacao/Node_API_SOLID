@@ -17,8 +17,43 @@ datasource db {
 model User {
   id String @id @default(uuid())
 
-  name  String
-  email String @unique
+  name          String
+  email         String   @unique
+  // combinacao aleatoria gerada a partir da senha, isso e uma metodo de criptografia
+  password_hash String
+  created_at    DateTime @default(now())
+
+  // nao vai gerar colunas no banco de dados somente para o prisma entender o relacionamento existente entre as tabelas
+  checkIns CheckIn[]
 
   @@map("users")
+}
+
+model CheckIn {
+  id           String    @id @default(uuid())
+  // é comum colocar um valor padrao como now para nao precisar passar do front end para ca
+  created_at   DateTime  @default(now())
+  // esse campo serve para ver quando foi validado e se foi validado
+  validated_at DateTime?
+
+  user    User   @relation(fields: [user_id], references: [id])
+  user_id String
+
+  gym    Gim    @relation(fields: [gim_id], references: [id])
+  gim_id String
+
+  @@map("check_ins")
+}
+
+model Gim {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  phone       String?
+  latitude    Decimal
+  longitude   Decimal
+  checkIns    CheckIn[]
+
+  //nome da tabela no banco
+  @@map("gyms")
 }

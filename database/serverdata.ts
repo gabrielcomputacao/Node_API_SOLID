@@ -1,7 +1,7 @@
 const { Client } = require("pg");
 
 const client = new Client({
-  user: "gabriel",
+  user: "postgres",
   host: "localhost",
   database: "apisolid",
   password: "123",
@@ -11,4 +11,4 @@ const client = new Client({
 client
   .connect()
   .then(() => console.log("Banco Rodando"))
-  .catch(() => console.log("Erro na conexão do Banco"));
+  .catch(() => console.error("Erro na conexão do Banco "));

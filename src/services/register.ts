@@ -1,5 +1,6 @@
 import { hash } from "bcryptjs";
 import { prisma } from "../lib/prisma";
+import { PrismaUsersRepository } from "@/repositories/prisma-users-repository";
 
 /* 
     Hash é uma biblioteca para incriptar os dados , nesse caso esta sendo incriptdo
@@ -36,11 +37,8 @@ export async function registerService({
     throw new Error("Email already exists");
   }
 
-  await prisma.user.create({
-    data: {
-      name,
-      email,
-      password_hash,
-    },
-  });
+  // class separada para comunicação com o banco usando o pattern repository
+  const prismaUsersRepository = new PrismaUsersRepository();
+
+  prismaUsersRepository.create({ name, email, password_hash });
 }

@@ -1,6 +1,7 @@
 import { hash } from "bcryptjs";
-import { prisma } from "../lib/prisma";
+
 import { UserRepository } from "@/repositories/users-repository";
+import { UserAlreadyExistsError } from "./errors/user-already-exists-error";
 
 /* 
     Hash é uma biblioteca para incriptar os dados , nesse caso esta sendo incriptdo
@@ -33,7 +34,7 @@ export class RegisterService {
     const userWithSameEmail = await this.usersRepository.findByEmail(email);
 
     if (userWithSameEmail) {
-      throw new Error("Email already exists");
+      throw new UserAlreadyExistsError();
     }
 
     // class separada para comunicação com o banco usando o pattern repository

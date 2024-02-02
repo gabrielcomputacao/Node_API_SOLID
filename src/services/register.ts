@@ -2,6 +2,7 @@ import { hash } from "bcryptjs";
 
 import { UserRepository } from "@/repositories/users-repository";
 import { UserAlreadyExistsError } from "./errors/user-already-exists-error";
+import { User } from "@prisma/client";
 
 /* 
     Hash é uma biblioteca para incriptar os dados , nesse caso esta sendo incriptdo
@@ -17,6 +18,10 @@ interface RegisterServiceRequest {
   password: string;
 }
 
+interface RegisterServiceRsponse {
+  user: User;
+}
+
 export class RegisterService {
   private usersRepository: UserRepository;
 
@@ -24,7 +29,11 @@ export class RegisterService {
     this.usersRepository = usersRepository;
   }
 
-  async execute({ name, email, password }: RegisterServiceRequest) {
+  async execute({
+    name,
+    email,
+    password,
+  }: RegisterServiceRequest): Promise<RegisterServiceRsponse> {
     // todo: Uma função assincrona ou uma promise pode ser usado o await ou o then (nesse caso: hash)
 
     const password_hash = await hash(password, 6);
@@ -40,6 +49,16 @@ export class RegisterService {
     // class separada para comunicação com o banco usando o pattern repository
     //const prismaUsersRepository = new PrismaUsersRepository();
 
-    await this.usersRepository.create({ name, email, password_hash });
+    const user = await this.usersRepository.create({
+      name,
+      email,
+      password_hash,
+    });
+
+    /* 
+        mesmo que tenha apenas um dado retornar em objeto caso essa função venha a ter mais parametros no futuro
+    */
+
+    return { user };
   }
 }

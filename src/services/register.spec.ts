@@ -1,4 +1,4 @@
-import { expect, describe, it } from "vitest";
+import { expect, describe, it, beforeEach } from "vitest";
 import { RegisterService } from "./register";
 
 import { compare } from "bcryptjs";
@@ -7,12 +7,17 @@ import { UserAlreadyExistsError } from "./errors/user-already-exists-error";
 
 // ! teste unitario nunca vai tocar em banco de dados nem em camadas internas, quando chama ou mexe com o banco ou dados externos e teste de integração ou outros
 
-describe("Register Services", () => {
-  it("should be able to register", async () => {
-    const usersRepository = new InMemoryUsersRepository();
-    const registerService = new RegisterService(usersRepository);
+let usersRepository: InMemoryUsersRepository;
+let sut: RegisterService;
 
-    const { user } = await registerService.execute({
+describe("Register Services", () => {
+  beforeEach(() => {
+    usersRepository = new InMemoryUsersRepository();
+    sut = new RegisterService(usersRepository);
+  });
+
+  it("should be able to register", async () => {
+    const { user } = await sut.execute({
       name: "John Doe",
       email: "john@hotmail.com",
       password: "1234567",
@@ -27,10 +32,7 @@ describe("Register Services", () => {
         os testes, para nao sujar o banco nem demorar os testes.
     */
 
-    const usersRepository = new InMemoryUsersRepository();
-    const registerService = new RegisterService(usersRepository);
-
-    const { user } = await registerService.execute({
+    const { user } = await sut.execute({
       name: "John Doe",
       email: "john@hotmail.com",
       password: "1234567",
@@ -46,12 +48,9 @@ describe("Register Services", () => {
     expect(isPasswordCorrectlyHashed).toBe(true);
   });
   it("should not be able to register with same email twice", async () => {
-    const usersRepository = new InMemoryUsersRepository();
-    const registerService = new RegisterService(usersRepository);
-
     const email = "john@hotmail.com";
 
-    await registerService.execute({
+    await sut.execute({
       name: "John Doe",
       email,
       password: "1234567",
@@ -60,7 +59,7 @@ describe("Register Services", () => {
     // todo: Sempre que tiver um promise dentro do expect adicionar o await
 
     await expect(() =>
-      registerService.execute({
+      sut.execute({
         name: "John Doe",
         email,
         password: "1234567",

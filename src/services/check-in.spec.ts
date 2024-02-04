@@ -1,15 +1,28 @@
 import { expect, describe, it, beforeEach, vi, afterEach } from "vitest";
 import { InMemoryCheckInsRepository } from "@/repositories/in-memory/in-memory-check-ins-repository";
 import { CheckInService } from "./checkin";
+import { InMemoryGymsRepository } from "@/repositories/in-memory/in-memory-gyms-repository";
+import { Decimal } from "@prisma/client/runtime/library";
 
 let checkInRepository: InMemoryCheckInsRepository;
+let gymRepository: InMemoryGymsRepository;
 let sut: CheckInService;
 
 describe("Check In Service", () => {
   beforeEach(() => {
     checkInRepository = new InMemoryCheckInsRepository();
+    gymRepository = new InMemoryGymsRepository();
 
-    sut = new CheckInService(checkInRepository);
+    sut = new CheckInService(checkInRepository, gymRepository);
+
+    gymRepository.items.push({
+      id: "gym01",
+      title: "JavaScript Gym",
+      description: "",
+      phone: "",
+      latitude: new Decimal(0),
+      longitude: new Decimal(0),
+    });
 
     // durante os testes usa uma data ficticia
     vi.useFakeTimers();
@@ -26,6 +39,8 @@ describe("Check In Service", () => {
     const { checkIn } = await sut.execute({
       gymId: "gym01",
       userId: "user01",
+      userLatitude: 0,
+      userLongitude: 0,
     });
 
     console.log(checkIn.created_at);
@@ -38,12 +53,16 @@ describe("Check In Service", () => {
     const { checkIn } = await sut.execute({
       gymId: "gym01",
       userId: "user01",
+      userLatitude: 0,
+      userLongitude: 0,
     });
 
     await expect(async () => {
       await sut.execute({
         gymId: "gym01",
         userId: "user01",
+        userLatitude: 0,
+        userLongitude: 0,
       });
     }).rejects.toBeInstanceOf(Error);
   });
@@ -53,6 +72,8 @@ describe("Check In Service", () => {
     await sut.execute({
       gymId: "gym01",
       userId: "user01",
+      userLatitude: 0,
+      userLongitude: 0,
     });
 
     vi.setSystemTime(new Date(2024, 0, 25, 8, 0, 0));
@@ -60,6 +81,8 @@ describe("Check In Service", () => {
     const { checkIn } = await sut.execute({
       gymId: "gym01",
       userId: "user01",
+      userLatitude: 0,
+      userLongitude: 0,
     });
 
     /* verifica se criou um usuario e se o id dele é igual a qualquer string, pois se tiver criado um id quer dizer que o usuario foi criado

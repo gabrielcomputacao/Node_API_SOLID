@@ -32,7 +32,7 @@ describe("Get user profile Service", () => {
     expect(user.name).toEqual("tim");
   });
   it("should not be able to get profile with wrong id", async () => {
-    expect(
+    await expect(
       async () =>
         await sut.execute({
           userId: "non-existing-id",

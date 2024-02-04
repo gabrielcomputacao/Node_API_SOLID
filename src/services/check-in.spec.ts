@@ -1,4 +1,4 @@
-import { expect, describe, it, beforeEach } from "vitest";
+import { expect, describe, it, beforeEach, vi, afterEach } from "vitest";
 import { InMemoryCheckInsRepository } from "@/repositories/in-memory/in-memory-check-ins-repository";
 import { CheckInService } from "./checkin";
 
@@ -10,14 +10,61 @@ describe("Check In Service", () => {
     checkInRepository = new InMemoryCheckInsRepository();
 
     sut = new CheckInService(checkInRepository);
+
+    // durante os testes usa uma data ficticia
+    vi.useFakeTimers();
+  });
+
+  // boa pratica para depois dos testes voltar com a data original
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it("should be able to get check in", async () => {
+    vi.setSystemTime(new Date(2024, 0, 24, 8, 0, 0));
+
     const { checkIn } = await sut.execute({
       gymId: "gym01",
       userId: "user01",
     });
 
+    console.log(checkIn.created_at);
+
+    expect(checkIn.id).toEqual(expect.any(String));
+  });
+  it("should not be able to check in twice in the same day", async () => {
+    vi.setSystemTime(new Date(2024, 0, 24, 8, 0, 0));
+
+    const { checkIn } = await sut.execute({
+      gymId: "gym01",
+      userId: "user01",
+    });
+
+    await expect(async () => {
+      await sut.execute({
+        gymId: "gym01",
+        userId: "user01",
+      });
+    }).rejects.toBeInstanceOf(Error);
+  });
+  it("should not be able to check in twice but in different days", async () => {
+    vi.setSystemTime(new Date(2024, 0, 24, 8, 0, 0));
+
+    await sut.execute({
+      gymId: "gym01",
+      userId: "user01",
+    });
+
+    vi.setSystemTime(new Date(2024, 0, 25, 8, 0, 0));
+
+    const { checkIn } = await sut.execute({
+      gymId: "gym01",
+      userId: "user01",
+    });
+
+    /* verifica se criou um usuario e se o id dele é igual a qualquer string, pois se tiver criado um id quer dizer que o usuario foi criado
+      independente do id
+    */
     expect(checkIn.id).toEqual(expect.any(String));
   });
 });

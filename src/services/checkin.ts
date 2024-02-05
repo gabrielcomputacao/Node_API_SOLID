@@ -3,6 +3,9 @@ import { CheckIn } from "@prisma/client";
 
 import { CheckInsRepository } from "@/repositories/check-ins-repositiry";
 import { ResourceNotFoundError } from "./errors/resource-not-found-error";
+import { getDistanceBetweenCoordinates } from "@/utils/get-distance-between-coordenates";
+import { MaxNumberOfCheckInsError } from "./errors/max-number-of-checkins-error";
+import { MaxDistanceError } from "./errors/max-distance-error";
 
 interface CheckInServiceRequest {
   userId: string;
@@ -23,11 +26,24 @@ export class CheckInService {
   async execute({
     userId,
     gymId,
+    userLatitude,
+    userLongitude,
   }: CheckInServiceRequest): Promise<CheckInServiceResponse> {
     const gym = await this.gymsRepository.findById(gymId);
 
     if (!gym) {
       throw new ResourceNotFoundError();
+    }
+
+    const distance = getDistanceBetweenCoordinates(
+      { latitude: userLatitude, longitude: userLongitude },
+      { latitude: gym.latitude.toNumber(), longitude: gym.longitude.toNumber() }
+    );
+
+    const MAX_DISTANCE_IN_KILOMETERS = 0.1;
+
+    if (distance > MAX_DISTANCE_IN_KILOMETERS) {
+      throw new MaxDistanceError();
     }
 
     // calcular a distancia do usuario e a academia se for maior que 100 metros precisa dar um erro
@@ -38,7 +54,7 @@ export class CheckInService {
     );
 
     if (checkInOnSameDay) {
-      throw new Error();
+      throw new MaxNumberOfCheckInsError();
     }
 
     const checkIn = await this.checkInsRepository.create({

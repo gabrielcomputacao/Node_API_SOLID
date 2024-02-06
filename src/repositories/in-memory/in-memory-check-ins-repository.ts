@@ -29,6 +29,10 @@ export class InMemoryCheckInsRepository implements CheckInsRepository {
     return checkInOnSameDate;
   }
 
+  async countByUserId(userId: string): Promise<number> {
+    return this.items.filter((item) => item.user_id === userId).length;
+  }
+
   async findManyByUserId(userId: string, page: number) {
     // todo: slice => funciona passando um intervalo e ele retorna os numeros entro os intervalos
     return this.items

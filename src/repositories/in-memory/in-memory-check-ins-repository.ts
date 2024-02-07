@@ -33,6 +33,26 @@ export class InMemoryCheckInsRepository implements CheckInsRepository {
     return this.items.filter((item) => item.user_id === userId).length;
   }
 
+  async findById(id: string) {
+    const checkIn = this.items.find((item) => item.id === id);
+
+    if (!checkIn) {
+      return null;
+    }
+
+    return checkIn;
+  }
+
+  async save(checkIn: CheckIn) {
+    const checkInIndex = this.items.findIndex((item) => item.id === checkIn.id);
+
+    if (checkInIndex >= 0) {
+      this.items[checkInIndex] = checkIn;
+    }
+
+    return checkIn;
+  }
+
   async findManyByUserId(userId: string, page: number) {
     // todo: slice => funciona passando um intervalo e ele retorna os numeros entro os intervalos
     return this.items

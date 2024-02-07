@@ -6,6 +6,8 @@ import { ResourceNotFoundError } from "./errors/resource-not-found-error";
 import { getDistanceBetweenCoordinates } from "@/utils/get-distance-between-coordenates";
 import { MaxNumberOfCheckInsError } from "./errors/max-number-of-checkins-error";
 import { MaxDistanceError } from "./errors/max-distance-error";
+import dayjs from "dayjs";
+import { LateCheckInValidateError } from "./errors/late-check-in-validation-error";
 
 interface ValidateCheckInServiceRequest {
   checkInId: string;
@@ -24,6 +26,17 @@ export class ValidateCheckInService {
 
     if (!checkIn) {
       throw new ResourceNotFoundError();
+    }
+
+    // diff retorna a diferença das duas datas passadas como parametro em uma unidade de medida escolhida
+
+    const distanceInMinutesFromCheckInCreation = dayjs(new Date()).diff(
+      checkIn.created_at,
+      "minutes"
+    );
+
+    if (distanceInMinutesFromCheckInCreation) {
+      throw new LateCheckInValidateError();
     }
 
     checkIn.validated_at = new Date();

@@ -64,7 +64,7 @@ describe("Check In Service", () => {
         gymId: "gym01",
         userId: "user01",
         userLatitude: -20.1695414,
-        userLongitude: -44.9157458,
+        userLongitude: -44.9157459,
       });
     }).rejects.toBeInstanceOf(MaxNumberOfCheckInsError);
   });

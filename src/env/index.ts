@@ -6,6 +6,7 @@ const envSchema = z.object({
   NODE_ENV: z.enum(["dev", "test", "production"]).default("dev"),
   /* coerce do zod converte o valor para o proximo valor definido depois dele */
   PORT: z.coerce.number().default(3333),
+  JWT_SECRET: z.string(),
 });
 
 //  todo: safeParse tenta verificar o que foi definido a cima se todas as variaveis tem o mesmo tipo

@@ -9,7 +9,7 @@
     "test:coverage": "vitest run --coverage",
     "dev": "tsx watch src/server.ts",
     "start": "node build/server.js",
-    "test:e2e":  "vitest run --dir src/http" ,
+    "test:e2e": "vitest run --dir src/http",
     "build": "tsup src --out-dir build"
   },
   "keywords": [],
@@ -18,8 +18,10 @@
   "devDependencies": {
     "@types/bcryptjs": "2.4.6",
     "@types/node": "20.11.9",
+    "@types/supertest": "6.0.2",
     "@vitest/coverage-v8": "1.2.2",
     "prisma": "5.8.1",
+    "supertest": "6.3.4",
     "tsup": "8.0.1",
     "tsx": "4.7.0",
     "typescript": "5.3.3",

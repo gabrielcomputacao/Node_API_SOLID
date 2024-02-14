@@ -4,11 +4,12 @@
   "description": "Criar API Node, com design patterns , testes automatizados e utilizar os principios da programação sendo um deles o SOLID.",
   "main": "index.js",
   "scripts": {
-    "test": "vitest run",
+    "test": "vitest run --dir src/services",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "dev": "tsx watch src/server.ts",
     "start": "node build/server.js",
+    "test:e2e":  "vitest run --dir src/http" ,
     "build": "tsup src --out-dir build"
   },
   "keywords": [],

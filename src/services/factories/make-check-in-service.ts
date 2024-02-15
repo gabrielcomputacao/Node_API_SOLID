@@ -3,7 +3,7 @@ import { PrismaCheckInsRepository } from "./../../repositories/prisma/prisma.che
 import { PrismaGymsRepository } from "./../../repositories/prisma/prisma-gyms-repository";
 import { GetUserMetricsService } from "../get-users-metrics";
 
-export function makeGetCheckInService() {
+export function makeCheckInService() {
   const prismaUsersRepository = new PrismaCheckInsRepository();
   const gymRepository = new PrismaGymsRepository();
   const service = new CheckInService(prismaUsersRepository, gymRepository);

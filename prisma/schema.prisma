@@ -14,6 +14,12 @@ datasource db {
 // um arroba(@) configura o campo da tabela
 
 // todo: Para ids expostos em rotas é melhor o uso do UUID() para melhor segurança
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
 model User {
   id String @id @default(uuid())
 
@@ -21,6 +27,7 @@ model User {
   email         String   @unique
   // combinacao aleatoria gerada a partir da senha, isso e uma metodo de criptografia
   password_hash String
+  role          Role     @default(MEMBER)
   created_at    DateTime @default(now())
 
   // nao vai gerar colunas no banco de dados somente para o prisma entender o relacionamento existente entre as tabelas

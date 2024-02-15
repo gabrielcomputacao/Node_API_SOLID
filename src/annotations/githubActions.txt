@@ -1,0 +1,38 @@
+
+// Nome do fluxo
+name: Run Unit Tests
+
+// quando vai ser ativado esse fluxo de tarefa, ex: quando usuario der um push, pull
+on: [push, pull_request]
+
+// define varios fluxo de trabalhos
+jobs:
+  run-unit-tests:
+    name: Run Unit tests
+
+    //onde vai rodar, podendo ser em linux, mac , ter as proprias imagens
+    runs-on: ubuntu-latest
+
+//passos a serem realizados no processo de CI ( Continuous Integration)
+    steps:
+        // baixa o codigo
+      - uses: actions/checkout@v3
+
+        //instala o node
+      - uses: actions/setup-node@v3
+
+        with:
+        //versao especifica a ser baixada
+          node-version: 18
+
+
+          //faz um cache das dependencias , caso nao mude nada ele mantem e nao precisa ficar instalando dinovo
+          cache: "npm"
+
+
+        //run = roda um comand no terminal, ci = executa no terminal npm sem ficar interagindo com o usuario, vai tudo direto
+      - run: npm ci
+
+
+        // run roda um comando, npm run test = foi o comando no packgage json que ira rodar para passar os testes na aplicacao
+      - run: npm run test

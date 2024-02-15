@@ -5,6 +5,7 @@ import { ZodError } from "zod";
 import { env } from "./env";
 import fastifyJwt from "@fastify/jwt";
 import { gymRoutes } from "./http/controllers/gyms/routes";
+import { checkInsRoutes } from "./http/controllers/check-ins/routes";
 
 export const app = fastify();
 
@@ -14,6 +15,7 @@ app.register(fastifyJwt, {
 
 app.register(usersRoutes);
 app.register(gymRoutes);
+app.register(checkInsRoutes);
 
 // colocar _ o codigo entende que foi um parametro que nao foi usado
 app.setErrorHandler((err, _, response) => {
